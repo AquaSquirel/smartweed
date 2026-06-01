@@ -1,41 +1,36 @@
-export async function GET(request: Request) {
-  const channelId = process.env.THINGSPEAK_CHANNEL_ID;
-  const apiKey = process.env.THINGSPEAK_READ_API_KEY;
+import { addReading, getReadings } from '@/lib/store';
 
-  if (!channelId || !apiKey) {
-    return Response.json(
-      { error: 'ThingSpeak não configurado. Defina THINGSPEAK_CHANNEL_ID e THINGSPEAK_READ_API_KEY no .env.local' },
-      { status: 500 }
-    );
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
+  return Response.json(
+    { readings: getReadings() },
+    { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+  );
+}
+
+export async function POST(request: Request) {
+  const token = process.env.API_TOKEN;
+  if (token) {
+    const auth = request.headers.get('Authorization');
+    if (auth !== `Bearer ${token}`) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
   }
 
-  const { searchParams } = new URL(request.url);
-  const results = searchParams.get('results') || '100';
-
+  let body: { device_id?: string; distance_cm?: number };
   try {
-    const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=${results}`;
-    const res = await fetch(url, { cache: 'no-store' });
-
-    if (!res.ok) {
-      throw new Error(`ThingSpeak retornou status ${res.status}`);
-    }
-
-    const data = await res.json();
-
-    if (data === -1 || data?.status === '-1') {
-      return Response.json(
-        { error: 'API Key inválida ou canal privado sem permissão' },
-        { status: 401 }
-      );
-    }
-
-    return Response.json(data, {
-      headers: { 'Cache-Control': 'no-store, max-age=0' },
-    });
+    body = await request.json();
   } catch {
-    return Response.json(
-      { error: 'Erro ao buscar dados do ThingSpeak' },
-      { status: 500 }
-    );
+    return Response.json({ error: 'JSON inválido' }, { status: 400 });
   }
+
+  const { device_id, distance_cm } = body;
+
+  if (typeof distance_cm !== 'number' || isNaN(distance_cm)) {
+    return Response.json({ error: 'distance_cm é obrigatório e deve ser um número' }, { status: 400 });
+  }
+
+  const reading = addReading(device_id ?? 'sensor-desconhecido', distance_cm);
+  return Response.json({ ok: true, reading });
 }

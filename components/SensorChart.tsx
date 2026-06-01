@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { SensorReading } from '@/lib/thingspeak';
+import { SensorReading } from '@/lib/sensor';
 
 interface ChartConfig {
   dataKey: keyof SensorReading;

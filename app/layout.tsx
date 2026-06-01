@@ -15,10 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://smartweed.mateuss.com.br'),
   title: "SmartWeed Dashboard",
-  description: "Monitoramento em tempo real de sensores IoT — Temperatura, Umidade e Luminosidade",
+  description: "Monitoramento em tempo real de sensores IoT — Distância via HC-SR04 e ESP32",
   openGraph: {
     title: "SmartWeed Dashboard",
-    description: "Monitoramento em tempo real de sensores IoT — Temperatura, Umidade e Luminosidade",
+    description: "Monitoramento em tempo real de sensores IoT — Distância via HC-SR04 e ESP32",
     siteName: "SmartWeed",
     locale: "pt_BR",
     type: "website",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "SmartWeed Dashboard",
-    description: "Monitoramento em tempo real de sensores IoT — Temperatura, Umidade e Luminosidade",
+    description: "Monitoramento em tempo real de sensores IoT — Distância via HC-SR04 e ESP32",
   },
 };
 

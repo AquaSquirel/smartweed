@@ -1,6 +1,6 @@
 'use client';
 
-import { SensorReading } from '@/lib/thingspeak';
+import { SensorReading } from '@/lib/sensor';
 
 interface FeedTableProps {
   readings: SensorReading[];
@@ -24,7 +24,7 @@ export default function FeedTable({ readings }: FeedTableProps) {
         <table className="w-full text-sm">
           <thead>
             <tr>
-              {['#', 'Data', 'Hora', 'Temperatura', 'Umidade', 'Luminosidade'].map((h) => (
+              {['#', 'Data', 'Hora', 'Dispositivo', 'Distância'].map((h) => (
                 <th
                   key={h}
                   className="text-left pb-3 pr-4 text-xs font-semibold uppercase tracking-wider"
@@ -37,48 +37,20 @@ export default function FeedTable({ readings }: FeedTableProps) {
           </thead>
           <tbody>
             {recent.map((r, i) => (
-              <tr key={r.entryId} className={`table-row-hover ${i === 0 ? 'latest-row' : ''}`}>
+              <tr key={r.id} className={`table-row-hover ${i === 0 ? 'latest-row' : ''}`}>
                 <td className="py-2 pr-4 font-mono text-xs" style={{ color: '#4ade8055' }}>
-                  {r.entryId}
+                  {r.id}
                 </td>
                 <td className="py-2 pr-4" style={{ color: '#86efac' }}>{r.date}</td>
                 <td className="py-2 pr-4 font-mono" style={{ color: '#86efac' }}>{r.time}</td>
-                <td className="py-2 pr-4">
-                  {r.temperature !== null ? (
-                    <span className="flex items-center gap-1">
-                      <span style={{ color: i === 0 ? '#4ade80' : '#dcfce7' }} className="font-semibold">
-                        {r.temperature.toFixed(1)}
-                      </span>
-                      <span style={{ color: '#4ade8055' }} className="text-xs">°C</span>
-                    </span>
-                  ) : <span style={{ color: '#4ade8033' }}>—</span>}
-                </td>
-                <td className="py-2 pr-4">
-                  {r.humidity !== null ? (
-                    <span className="flex items-center gap-1">
-                      <span style={{ color: i === 0 ? '#38bdf8' : '#dcfce7' }} className="font-semibold">
-                        {r.humidity.toFixed(1)}
-                      </span>
-                      <span style={{ color: '#4ade8055' }} className="text-xs">%</span>
-                    </span>
-                  ) : <span style={{ color: '#4ade8033' }}>—</span>}
-                </td>
+                <td className="py-2 pr-4" style={{ color: '#86efac' }}>{r.device_id}</td>
                 <td className="py-2">
-                  {r.lightPct !== null ? (
-                    <span className="flex items-center gap-2">
-                      <span style={{ color: i === 0 ? '#facc15' : '#dcfce7' }} className="font-semibold">
-                        {r.lightPct.toFixed(0)}
-                      </span>
-                      <span style={{ color: '#4ade8055' }} className="text-xs">%</span>
-                      <span
-                        className="inline-block h-1.5 rounded-full"
-                        style={{
-                          width: `${Math.max(8, r.lightPct * 0.5)}px`,
-                          background: `rgba(250,204,21,${0.3 + (r.lightPct / 100) * 0.7})`,
-                        }}
-                      />
+                  <span className="flex items-center gap-1">
+                    <span style={{ color: i === 0 ? '#4ade80' : '#dcfce7' }} className="font-semibold">
+                      {r.distance_cm.toFixed(1)}
                     </span>
-                  ) : <span style={{ color: '#4ade8033' }}>—</span>}
+                    <span style={{ color: '#4ade8055' }} className="text-xs">cm</span>
+                  </span>
                 </td>
               </tr>
             ))}
